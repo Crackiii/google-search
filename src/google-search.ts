@@ -17,7 +17,8 @@ export const getGoogleSearchResultsByQueries = async (queries: string[]) => {
       args: [
         "--lang=en-US", 
         "--window-size=1920,1080",
-        "--no-sandbox"
+        "--no-sandbox",
+        "--disable-setuid-sandbox",
       ],
       defaultViewport: null,
       headless: true,
@@ -94,7 +95,9 @@ export const getWebsiteDataByLink = async (links: string[]) => {
       defaultViewport: null,
       args: [
         "--lang=en-US", 
+        "--window-size=1920,1080",
         "--no-sandbox",
+        "--disable-setuid-sandbox"
       ]
     }
   });
