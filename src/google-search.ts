@@ -9,7 +9,7 @@ import { Page } from "puppeteer";
 export const getGoogleSearchResultsByQueries = async (queries: string[]) => {
 
   const cluster = await Cluster.launch({
-    concurrency: Cluster.CONCURRENCY_PAGE,
+    concurrency: Cluster.CONCURRENCY_CONTEXT,
     maxConcurrency: 50,
     monitor: true,
     timeout: 60000,
@@ -86,7 +86,7 @@ export const getGoogleSearchResultsByQueries = async (queries: string[]) => {
 
 export const getWebsiteDataByLink = async (links: string[]) => {
   const cluster = await Cluster.launch({
-    concurrency: Cluster.CONCURRENCY_PAGE,
+    concurrency: Cluster.CONCURRENCY_CONTEXT,
     maxConcurrency: 50,
     monitor: true,
     timeout: 30000,
