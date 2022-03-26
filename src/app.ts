@@ -6,7 +6,7 @@ import bodyParser from "body-parser";
 const app = express();
 
 // Express configuration
-app.set("port", process.env.NODE_ENV || 8003);
+app.set("port", process.env.PORT || 8003);
 
 app.use(bodyParser.json());
 
