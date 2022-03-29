@@ -1,5 +1,5 @@
 import express from "express";
-import { getGoogleSearchResultsByQueries } from "./google-search";
+import { getGoogleSearchResultsByQueries, getWebsiteDataByLink } from "./google-search";
 import bodyParser from "body-parser";
 
 // Create Express server
@@ -40,7 +40,7 @@ app.post("/google-search:queries", async (req, res) => {
     const data = await getGoogleSearchResultsByQueries(req.body.queries);
     console.log("SCRAPPED DATA", data);
     res.send(data);
-  } catch(error) {
+  } catch (error) {
     res.send(error.message);
   }
 });
@@ -48,13 +48,13 @@ app.post("/google-search:queries", async (req, res) => {
 app.post("/google-search:links", async (req, res) => {
   try {
     console.log("STARTING SCRAPPING");
-    console.log(req.body.queries);
-    const data = await getGoogleSearchResultsByQueries(req.body.links);
+    console.log(req.body.links);
+    const data = await getWebsiteDataByLink(req.body.links);
     res.send(data);
-  } catch(error) {
+  } catch (error) {
     res.send(error.message);
   }
-  
+
 });
 
 
