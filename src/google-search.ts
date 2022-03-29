@@ -8,91 +8,88 @@ import { Page } from "puppeteer";
 
 export const getGoogleSearchResultsByQueries = async (queries: string[]) => {
 
-  try {
-
   const cluster = await Cluster.launch({
-    concurrency: Cluster.CONCURRENCY_CONTEXT,
+    concurrency: Cluster.CONCURRENCY_PAGE,
     maxConcurrency: 50,
     monitor: true,
     timeout: 60000,
     puppeteerOptions: {
       args: [
-        "--lang=en-US", 
+        "--lang=en-US",
         "--window-size=1920,1080",
         "--no-sandbox",
-        "--disable-setuid-sandbox",
       ],
       defaultViewport: null,
       headless: true,
     }
   });
 
-  const queriesData: any = [];
+  try {
 
-  cluster.on("taskerror", (err) => {
-    console.log(err);
-  });
+    const queriesData: any = [];
 
-  await cluster.task(async ({ page, data: query }) => {
-
-    if (!Boolean(query.length)) return [{ links: [], query }];
-
-    await page.authenticate({ username: "nadeemahmad", password: "Ndim2229" });
-
-    await page.setExtraHTTPHeaders({
-      "Accept-Language": "en-US"
+    cluster.on("taskerror", (err) => {
+      console.log(err);
     });
 
-    await page.goto(`https://google.com/search?q=${query}`);
+    await cluster.task(async ({ page, data: query }) => {
 
-    await page.screenshot({ path: "search.png" });
+      if (!Boolean(query.length)) return [{ links: [], query }];
 
-    // Wait for search results container to be available
-    try {
-      await page.waitForSelector("#search", { visible: true, timeout: 30000 });
-    } catch (error) {
-      const isTrafficDetected = await page.evaluate(() => {
-        return /Our systems have detected unusual traffic from your computer/gim.test(document.body.textContent);
+      await page.authenticate({ username: "nadeemahmad", password: "Ndim2229" });
+
+      await page.setExtraHTTPHeaders({
+        "Accept-Language": "en-US"
       });
 
-      return { trafficError: isTrafficDetected };
-    }
+      await page.goto(`https://google.com/search?q=${query}`);
 
-    // Collect all the links
-    const data = await page.evaluate(() => {
-      const links = Array.from(document.querySelectorAll(".yuRUbf"));
-      const data = links.map(link => {
-        return {
-          link: link.querySelector("a").getAttribute("href"),
-          title: link.querySelector("h3").textContent.trim(),
-        };
+      await page.screenshot({ path: "search.png" });
+
+      // Wait for search results container to be available
+      try {
+        await page.waitForSelector("#search", { visible: true, timeout: 30000 });
+      } catch (error) {
+        const isTrafficDetected = await page.evaluate(() => {
+          return /Our systems have detected unusual traffic from your computer/gim.test(document.body.textContent);
+        });
+
+        return { trafficError: isTrafficDetected };
+      }
+
+      // Collect all the links
+      const data = await page.evaluate(() => {
+        const links = Array.from(document.querySelectorAll(".yuRUbf"));
+        const data = links.map(link => {
+          return {
+            link: link.querySelector("a").getAttribute("href"),
+            title: link.querySelector("h3").textContent.trim(),
+          };
+        });
+
+        return data;
       });
 
-      return data;
+      queriesData.push({ links: data, query });
+      await page.close();
     });
 
-    queriesData.push({ links: data, query });
-    await page.close();
-  });
+    for (const query of queries) cluster.queue(query);
 
-  for (const query of queries) cluster.queue(query);
+    await cluster.idle();
+    await cluster.close();
 
-  await cluster.idle();
-  await cluster.close();
-
-  return queriesData;
-} catch(error) {
-  console.log(`Error in getGoogleSearchResultsByQueries(): ${error.message}`);
-}
+    return queriesData;
+  } catch (error) {
+    await cluster.close();
+    console.log(`Error in getGoogleSearchResultsByQueries(): ${error.message}`);
+  }
 };
 
 
-
-
 export const getWebsiteDataByLink = async (links: string[]) => {
-  try {
   const cluster = await Cluster.launch({
-    concurrency: Cluster.CONCURRENCY_CONTEXT,
+    concurrency: Cluster.CONCURRENCY_PAGE,
     maxConcurrency: 50,
     monitor: true,
     timeout: 30000,
@@ -100,54 +97,55 @@ export const getWebsiteDataByLink = async (links: string[]) => {
       headless: true,
       defaultViewport: null,
       args: [
-        "--lang=en-US", 
+        "--lang=en-US",
         "--window-size=1920,1080",
         "--no-sandbox",
-        "--disable-setuid-sandbox"
       ]
     }
   });
 
-  const websiteData: any[] = [];
+  try {
+    const websiteData: any[] = [];
 
-  cluster.on("taskerror", (err, data) => {
-    console.log(`Error crawling getWebsiteDataByLink(): ${data}: ${err.message}`);
-  });
-
-  await cluster.task(async ({ page, data: url }) => {
-    if (!Boolean(url)) return;
-
-    await page.setExtraHTTPHeaders({
-      "Accept-Language": "en-US"
+    cluster.on("taskerror", (err, data) => {
+      console.log(`Error crawling getWebsiteDataByLink(): ${data}: ${err.message}`);
     });
 
-    await page.goto(url, { waitUntil: "load", timeout: 0 });
+    await cluster.task(async ({ page, data: url }) => {
+      if (!Boolean(url)) return;
 
-    const type = websiteType(url);
+      await page.setExtraHTTPHeaders({
+        "Accept-Language": "en-US"
+      });
 
-    if (type === "youtube") {
-      const data = await evaluateYoutubeData(page);
+      await page.goto(url, { waitUntil: "load", timeout: 0 });
 
-      websiteData.push(data);
-    }
+      const type = websiteType(url);
 
-    if (type === "general") {
-      const data = await evaluateGeneralWebsite(page);
+      if (type === "youtube") {
+        const data = await evaluateYoutubeData(page);
 
-      websiteData.push(data);
-    }
+        websiteData.push(data);
+      }
 
-  });
+      if (type === "general") {
+        const data = await evaluateGeneralWebsite(page);
 
-  for (const url of links) cluster.queue(url);
+        websiteData.push(data);
+      }
 
-  await cluster.idle();
-  await cluster.close();
+    });
 
-  return websiteData;
-} catch(error) {
-  console.log(`Error in getWebsiteDataByLink() : ${error.message}`);
-}
+    for (const url of links) cluster.queue(url);
+
+    await cluster.idle();
+    await cluster.close();
+
+    return websiteData;
+  } catch (error) {
+    await cluster.close();
+    console.log(`Error in getWebsiteDataByLink() : ${error.message}`);
+  }
 };
 
 const websiteType = (url: string): "youtube" | "general" => {
@@ -200,26 +198,24 @@ const getPageMetaData = async (page: Page) => {
     const title = document.title;
 
     const getFavicon = () => {
-        let favicon = "";
-        const nodeList = document.getElementsByTagName("link");
-        for (let i = 0; i < nodeList.length; i++)
-        {
-            if((nodeList[i].getAttribute("rel") == "icon")||(nodeList[i].getAttribute("rel") == "shortcut icon"))
-            {
-                favicon = nodeList[i].getAttribute("href");
-            }
+      let favicon = "";
+      const nodeList = document.getElementsByTagName("link");
+      for (let i = 0; i < nodeList.length; i++) {
+        if ((nodeList[i].getAttribute("rel") == "icon") || (nodeList[i].getAttribute("rel") == "shortcut icon")) {
+          favicon = nodeList[i].getAttribute("href");
         }
-        return favicon;        
+      }
+      return favicon;
     };
 
-    const validURL = (str: string) =>  {
-      const pattern = new RegExp("^(https?:\\/\\/)?"+ // protocol
-        "((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|"+ // domain name
-        "((\\d{1,3}\\.){3}\\d{1,3}))"+ // OR ip (v4) address
-        "(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*"+ // port and path
-        "(\\?[;&a-z\\d%_.~+=-]*)?"+ // query string
-        "(\\#[-a-z\\d_]*)?$","i"); // fragment locator
-    
+    const validURL = (str: string) => {
+      const pattern = new RegExp("^(https?:\\/\\/)?" + // protocol
+        "((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|" + // domain name
+        "((\\d{1,3}\\.){3}\\d{1,3}))" + // OR ip (v4) address
+        "(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*" + // port and path
+        "(\\?[;&a-z\\d%_.~+=-]*)?" + // query string
+        "(\\#[-a-z\\d_]*)?$", "i"); // fragment locator
+
       return !!pattern.test(str);
     };
 
@@ -228,7 +224,7 @@ const getPageMetaData = async (page: Page) => {
     const allImages = Array.from(document.querySelectorAll("img")).map(img => img.src);
 
     const favicon = getFavicon();
-  
+
     const keywords = metas
       .filter(meta => meta?.getAttribute("name") === "keywords")
       .map(meta => meta?.getAttribute("content")).join(",");
@@ -259,7 +255,7 @@ const getPageMetaData = async (page: Page) => {
     ...twitter.filter(o => (o.property === "twitter:image" || /image/gmi.test(o.property)))
     ].map(o => o?.content);
 
-    return { title, keywords, facebook, twitter, images, description: [...description, metaDescription], favicon, url, allImages};
+    return { title, keywords, facebook, twitter, images, description: [...description, metaDescription], favicon, url, allImages };
   });
 
   return metaData;

@@ -35,11 +35,11 @@ app.get("/health", (req, res) => res.status(200).send("Health check works"));
 
 app.post("/google-search:queries", async (req, res) => {
   try {
-  console.log("STARTING SCRAPPING");
-  console.log(req.body.queries);
-  const data = await getGoogleSearchResultsByQueries(req.body.queries);
-  console.log("SCRAPPED DATA", data);
-  res.send(data);
+    console.log("STARTING SCRAPPING");
+    console.log(req.body.queries);
+    const data = await getGoogleSearchResultsByQueries(req.body.queries);
+    console.log("SCRAPPED DATA", data);
+    res.send(data);
   } catch(error) {
     res.send(error.message);
   }
@@ -47,8 +47,10 @@ app.post("/google-search:queries", async (req, res) => {
 
 app.post("/google-search:links", async (req, res) => {
   try {
-  const data = await getGoogleSearchResultsByQueries(req.body.links);
-  res.send(data);
+    console.log("STARTING SCRAPPING");
+    console.log(req.body.queries);
+    const data = await getGoogleSearchResultsByQueries(req.body.links);
+    res.send(data);
   } catch(error) {
     res.send(error.message);
   }
