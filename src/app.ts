@@ -28,7 +28,10 @@ app.use(function (_, res, next) {
 /**
  * API examples routes.
  */
+
 app.get("/", (req, res) => res.send("WELCOME TO GOOGLE SEARCH APP"));
+
+app.get("/health", (req, res) => res.status(200).send("Health check"));
 
 app.post("/google-search:queries", async (req, res) => {
   const data = await getGoogleSearchResultsByQueries(req.body.queries);
