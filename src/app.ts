@@ -33,7 +33,7 @@ app.get("/", (req, res) => res.send("WELCOME TO GOOGLE SEARCH APP"));
 
 app.get("/health", (req, res) => res.status(200).send("Health check works"));
 
-app.post("/google-search:queries", async (req, res) => {
+app.post("/google-search/queries", async (req, res) => {
   try {
     console.log("STARTING SCRAPPING");
     console.log(req.body.queries);
@@ -45,7 +45,7 @@ app.post("/google-search:queries", async (req, res) => {
   }
 });
 
-app.post("/google-search:links", async (req, res) => {
+app.post("/google-search/links", async (req, res) => {
   try {
     console.log("STARTING SCRAPPING");
     console.log(req.body.links);
