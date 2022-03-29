@@ -11,7 +11,7 @@ export const getGoogleSearchResultsByQueries = async (queries: string[]) => {
   const cluster = await Cluster.launch({
     concurrency: Cluster.CONCURRENCY_PAGE,
     maxConcurrency: 50,
-    monitor: true,
+    monitor: false,
     timeout: 60000,
     puppeteerOptions: {
       args: [
@@ -91,7 +91,7 @@ export const getWebsiteDataByLink = async (links: string[]) => {
   const cluster = await Cluster.launch({
     concurrency: Cluster.CONCURRENCY_PAGE,
     maxConcurrency: 50,
-    monitor: true,
+    monitor: false,
     timeout: 30000,
     puppeteerOptions: {
       headless: true,
