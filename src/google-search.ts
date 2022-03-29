@@ -82,7 +82,7 @@ export const getGoogleSearchResultsByQueries = async (queries: string[]) => {
     return queriesData;
   } catch (error) {
     await cluster.close();
-    console.log(`Error in getGoogleSearchResultsByQueries(): ${error.message}`);
+    return `Error in getGoogleSearchResultsByQueries(): ${error.message}`;
   }
 };
 
@@ -144,7 +144,7 @@ export const getWebsiteDataByLink = async (links: string[]) => {
     return websiteData;
   } catch (error) {
     await cluster.close();
-    console.log(`Error in getWebsiteDataByLink() : ${error.message}`);
+    return `Error in getWebsiteDataByLink(): ${error.message}`;
   }
 };
 
