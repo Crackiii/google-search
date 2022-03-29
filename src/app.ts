@@ -31,11 +31,13 @@ app.use(function (_, res, next) {
 
 app.get("/", (req, res) => res.send("WELCOME TO GOOGLE SEARCH APP"));
 
-app.get("/health", (req, res) => res.status(200).send("Health check"));
+app.get("/health", (req, res) => res.status(200).send("Health check works"));
 
 app.post("/google-search:queries", async (req, res) => {
+  console.log("STARTING SCRAPPING");
+  console.log(req.body.queries);
   const data = await getGoogleSearchResultsByQueries(req.body.queries);
-
+  console.log("SCRAPPED DATA", data);
   res.send(data);
 });
 
