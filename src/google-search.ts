@@ -8,6 +8,8 @@ import { Page } from "puppeteer";
 
 export const getGoogleSearchResultsByQueries = async (queries: string[]) => {
 
+  try {
+
   const cluster = await Cluster.launch({
     concurrency: Cluster.CONCURRENCY_CONTEXT,
     maxConcurrency: 50,
@@ -79,12 +81,16 @@ export const getGoogleSearchResultsByQueries = async (queries: string[]) => {
   await cluster.close();
 
   return queriesData;
+} catch(error) {
+  console.log(`Error in getGoogleSearchResultsByQueries(): ${error.message}`);
+}
 };
 
 
 
 
 export const getWebsiteDataByLink = async (links: string[]) => {
+  try {
   const cluster = await Cluster.launch({
     concurrency: Cluster.CONCURRENCY_CONTEXT,
     maxConcurrency: 50,
@@ -139,6 +145,9 @@ export const getWebsiteDataByLink = async (links: string[]) => {
   await cluster.close();
 
   return websiteData;
+} catch(error) {
+  console.log(`Error in getWebsiteDataByLink() : ${error.message}`);
+}
 };
 
 const websiteType = (url: string): "youtube" | "general" => {
