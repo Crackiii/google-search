@@ -36,7 +36,7 @@ app.get("/health", (_, res) => res.status(200).send("Health check works"));
 app.post("/google-search/queries", async (req, res) => {
   try {
     const data = await getGoogleSearchResultsByQueries(req.body.queries);
-
+    console.log({FUCK_THIS_DATA: data});
     res.send(data);
   } catch (error) {
     console.log(error.message);
