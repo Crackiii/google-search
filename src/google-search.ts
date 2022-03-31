@@ -13,6 +13,15 @@ const proxies = [
   "196.245.244.231:7777 "
 ];
 
+let proxy = proxies[0];
+
+//set proxy for puppeteer to use proxy server to avoid CORS/ 419 error on google search page 
+setTimeout(() => {
+  console.log("Setting proxy to: ", proxy);
+  proxy = proxies[Math.floor(Math.random() * proxies.length)];
+}, 60000);
+
+
 
 export const getGoogleSearchResultsByQueries = async (queries: string[]) => {
 
@@ -25,7 +34,7 @@ export const getGoogleSearchResultsByQueries = async (queries: string[]) => {
       args: [
         "--lang=en-US",
         "--window-size=1920,1080",
-        `--proxy-server=${proxies[0]}`,
+        `--proxy-server=${proxy}`,
         "--no-sandbox",
       ],
       defaultViewport: null,
@@ -89,8 +98,7 @@ export const getGoogleSearchResultsByQueries = async (queries: string[]) => {
 
     return queriesData;
   } catch (error) {
-    await cluster.close();
-    return `Error in getGoogleSearchResultsByQueries(): ${error.message}`;
+    return new Error(`Error in getGoogleSearchResultsByQueries(): ${error.message}`);
   }
 };
 
@@ -116,7 +124,7 @@ export const getWebsiteDataByLink = async (links: string[]) => {
     const websiteData: any[] = [];
 
     cluster.on("taskerror", (err, data) => {
-      throw new Error(`Error crawling getGoogleSearchResultsByQueries(): ${data}: ${err.message}`);
+      throw new Error(`${data}: ${err.message}`);
     });
 
     await cluster.task(async ({ page, data: url }) => {
@@ -143,7 +151,7 @@ export const getWebsiteDataByLink = async (links: string[]) => {
       }
 
       if(type === "none") {
-        websiteData.push({});
+        websiteData.push({html: "", short_description: "", metaData: {}});
       }
 
     });
@@ -155,8 +163,7 @@ export const getWebsiteDataByLink = async (links: string[]) => {
 
     return websiteData;
   } catch (error) {
-    await cluster.close();
-    return `Error in getWebsiteDataByLink(): ${error.message}`;
+    return new Error(`Error in getWebsiteDataByLink(): ${error.message}`);
   }
 };
 

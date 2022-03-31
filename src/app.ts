@@ -29,30 +29,34 @@ app.use(function (_, res, next) {
  * API examples routes.
  */
 
-app.get("/", (req, res) => res.send("WELCOME TO GOOGLE SEARCH APP"));
+app.get("/", (_, res) => res.send("WELCOME TO GOOGLE SEARCH APP"));
 
-app.get("/health", (req, res) => res.status(200).send("Health check works"));
+app.get("/health", (_, res) => res.status(200).send("Health check works"));
 
 app.post("/google-search/queries", async (req, res) => {
   try {
-    console.log("STARTING SCRAPPING");
-    console.log(req.body.queries);
     const data = await getGoogleSearchResultsByQueries(req.body.queries);
-    console.log("SCRAPPED DATA", data);
-    res.send(data);
+
+    
+    if((data).error) {
+      res.status(500).send(data);
+    }
+    res.send(200).send(data);
   } catch (error) {
-    res.send(error.message);
+    console.log(error.message);
   }
 });
 
 app.post("/google-search/links", async (req, res) => {
   try {
-    console.log("STARTING SCRAPPING");
-    console.log(req.body.links);
     const data = await getWebsiteDataByLink(req.body.links);
-    res.send(data);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    if((data as any).error) {
+      res.status(500).send(data);
+    }
+    res.send(200).send(data);
   } catch (error) {
-    res.send(error.message);
+    console.log(error.message);
   }
 
 });
