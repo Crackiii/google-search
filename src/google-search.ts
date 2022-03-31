@@ -16,7 +16,7 @@ const proxies = [
 export const getGoogleSearchResultsByQueries = async (queries: string[]) => {
   try {
   const proxy = proxies[Math.floor(Math.random() * proxies.length)];
-  
+
   const cluster = await Cluster.launch({
     concurrency: Cluster.CONCURRENCY_PAGE,
     maxConcurrency: 50,
@@ -87,7 +87,6 @@ export const getGoogleSearchResultsByQueries = async (queries: string[]) => {
 
     await cluster.idle();
     await cluster.close();
-    clearInterval(interval);
     return {queriesData, errors};
   } catch (error) {
     return new Error(`Error in getGoogleSearchResultsByQueries(): ${error.message}`);
