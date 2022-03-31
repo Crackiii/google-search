@@ -28,8 +28,8 @@ export const getGoogleSearchResultsByQueries = async (queries: string[]) => {
 
     const queriesData: any = [];
 
-    cluster.on("taskerror", (err) => {
-      console.log(err);
+    cluster.on("taskerror", (err, data) => {
+      throw new Error(`Error crawling getGoogleSearchResultsByQueries(): ${data}: ${err.message}`);
     });
 
     await cluster.task(async ({ page, data: query }) => {
@@ -53,8 +53,7 @@ export const getGoogleSearchResultsByQueries = async (queries: string[]) => {
         const isTrafficDetected = await page.evaluate(() => {
           return /Our systems have detected unusual traffic from your computer/gim.test(document.body.textContent);
         });
-
-        return { trafficError: isTrafficDetected };
+        throw new Error(`Error crawling on query - ${query}: ${isTrafficDetected ? "Our systems have detected unusual traffic from your computer" : error.message}`);
       }
 
       // Collect all the links
@@ -108,7 +107,7 @@ export const getWebsiteDataByLink = async (links: string[]) => {
     const websiteData: any[] = [];
 
     cluster.on("taskerror", (err, data) => {
-      console.log(`Error crawling getWebsiteDataByLink(): ${data}: ${err.message}`);
+      throw new Error(`Error crawling getGoogleSearchResultsByQueries(): ${data}: ${err.message}`);
     });
 
     await cluster.task(async ({ page, data: url }) => {
