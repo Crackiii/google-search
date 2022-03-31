@@ -19,12 +19,12 @@ let proxy = proxies[0];
 setTimeout(() => {
   console.log("Setting proxy to: ", proxy);
   proxy = proxies[Math.floor(Math.random() * proxies.length)];
-}, 60000);
+}, 60000 * 2);
 
 
 
 export const getGoogleSearchResultsByQueries = async (queries: string[]) => {
-
+  try {
   const cluster = await Cluster.launch({
     concurrency: Cluster.CONCURRENCY_PAGE,
     maxConcurrency: 50,
@@ -42,12 +42,12 @@ export const getGoogleSearchResultsByQueries = async (queries: string[]) => {
     }
   });
 
-  try {
 
     const queriesData: any = [];
+    const errors: any = [];
 
     cluster.on("taskerror", (err) => {
-      throw new Error(err.message);
+      errors.push(`Error in getGoogleSearchResultsByQueries() - ${err.message}`);
     });
 
     await cluster.task(async ({ page, data: query }) => {
@@ -96,7 +96,7 @@ export const getGoogleSearchResultsByQueries = async (queries: string[]) => {
     await cluster.idle();
     await cluster.close();
 
-    return queriesData;
+    return {queriesData, errors};
   } catch (error) {
     return new Error(`Error in getGoogleSearchResultsByQueries(): ${error.message}`);
   }
@@ -104,6 +104,7 @@ export const getGoogleSearchResultsByQueries = async (queries: string[]) => {
 
 
 export const getWebsiteDataByLink = async (links: string[]) => {
+  try {
   const cluster = await Cluster.launch({
     concurrency: Cluster.CONCURRENCY_PAGE,
     maxConcurrency: 50,
@@ -120,11 +121,12 @@ export const getWebsiteDataByLink = async (links: string[]) => {
     }
   });
 
-  try {
+  
     const websiteData: any[] = [];
+    const errors: any[] = [];
 
     cluster.on("taskerror", (err, data) => {
-      throw new Error(`${data}: ${err.message}`);
+      errors.push(`Error in getWebsiteDataByLink() - ${data}: ${err.message}`);
     });
 
     await cluster.task(async ({ page, data: url }) => {
@@ -161,7 +163,7 @@ export const getWebsiteDataByLink = async (links: string[]) => {
     await cluster.idle();
     await cluster.close();
 
-    return websiteData;
+    return {websiteData, errors};
   } catch (error) {
     return new Error(`Error in getWebsiteDataByLink(): ${error.message}`);
   }
