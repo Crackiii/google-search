@@ -134,6 +134,10 @@ export const getWebsiteDataByLink = async (links: string[]) => {
         websiteData.push(data);
       }
 
+      if(type === "none") {
+        websiteData.push({});
+      }
+
     });
 
     for (const url of links) cluster.queue(url);
@@ -148,8 +152,12 @@ export const getWebsiteDataByLink = async (links: string[]) => {
   }
 };
 
-const websiteType = (url: string): "youtube" | "general" => {
+const websiteType = (url: string): "youtube" | "general" | "none" => {
   if (/youtube.com/gmi.test(url)) return "youtube";
+  if (/facebook.com/gmi.test(url)) return "none";
+  if (/twitter.com/gmi.test(url)) return "none";
+  if (/instagram.com/gmi.test(url)) return "none";
+  if (/tiktok.com/gmi.test(url)) return "none";
 
   return "general";
 };
@@ -166,7 +174,7 @@ const evaluateGeneralWebsite = async (page: Page) => {
   const doc = new JSDOM(data);
   const reader = new Readability(doc.window.document);
 
-  return { html: reader.parse()?.content, metaData };
+  return { html: reader.parse()?.content, short_description: reader.parse()?.excerpt, metaData };
 };
 
 const evaluateYoutubeData = async (page: Page) => {
