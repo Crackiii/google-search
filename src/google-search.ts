@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Cluster } from "puppeteer-cluster";
 import { Readability } from "@mozilla/readability";
 import { JSDOM } from "jsdom";
