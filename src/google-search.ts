@@ -19,7 +19,7 @@ let proxy = proxies[0];
 setTimeout(() => {
   console.log("Setting proxy to: ", proxy);
   proxy = proxies[Math.floor(Math.random() * proxies.length)];
-}, 60000 * 2);
+}, 60000);
 
 
 
@@ -71,7 +71,7 @@ export const getGoogleSearchResultsByQueries = async (queries: string[]) => {
         const isTrafficDetected = await page.evaluate(() => {
           return /Our systems have detected unusual traffic from your computer/gim.test(document.body.textContent);
         });
-        throw new Error(`Error crawling on query - ${query}: ${isTrafficDetected ? "Our systems have detected unusual traffic from your computer" : error.message}`);
+        throw new Error(`Error crawling on query - ${query}: ${isTrafficDetected ? "Our systems have detected unusual traffic from your computer" : error.message} - IP : ${proxy}`);
       }
 
       // Collect all the links
