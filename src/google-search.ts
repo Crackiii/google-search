@@ -1,9 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Cluster } from "puppeteer-cluster";
+import * as puppeteer from "puppeteer-cluster";
 import { Readability } from "@mozilla/readability";
 import { JSDOM } from "jsdom";
 import { Page } from "puppeteer";
-
+import UserAgent from "user-agents";
 
 const proxies_list = [
   "165.231.37.254:7777",
@@ -40,13 +40,22 @@ const getProxy = () => {
   return proxy;
 };
 
+const getRandomUserAgent = () => {
+  const random = new UserAgent({
+    platform: "desktop",
+  });
+  return random.random().toString();
+};
+
 
 export const getGoogleSearchResultsByQueries = async (queries: string[]) => {
   try {
-  const proxy = getProxy();
 
-  const cluster = await Cluster.launch({
-    concurrency: Cluster.CONCURRENCY_PAGE,
+  const proxy = getProxy();
+  const agent = getRandomUserAgent();
+
+  const cluster = await puppeteer.Cluster.launch({
+    concurrency: puppeteer.Cluster.CONCURRENCY_PAGE,
     maxConcurrency: 50,
     monitor: false,
     timeout: 60000,
@@ -74,8 +83,8 @@ export const getGoogleSearchResultsByQueries = async (queries: string[]) => {
 
       if (!Boolean(query.length)) return [{ links: [], query }];
 
+      await page.setUserAgent(agent);
       await page.authenticate({ username: "nadeemahmad", password: "Ndim2229" });
-
       await page.setExtraHTTPHeaders({
         "Accept-Language": "en-US"
       });
@@ -111,6 +120,8 @@ export const getGoogleSearchResultsByQueries = async (queries: string[]) => {
       await page.close();
     });
 
+    console.log({queries});
+
     for (const query of queries) cluster.queue(query);
 
     await cluster.idle();
@@ -124,8 +135,8 @@ export const getGoogleSearchResultsByQueries = async (queries: string[]) => {
 
 export const getWebsiteDataByLink = async (links: string[]) => {
   try {
-  const cluster = await Cluster.launch({
-    concurrency: Cluster.CONCURRENCY_PAGE,
+  const cluster = await puppeteer.Cluster.launch({
+    concurrency: puppeteer.Cluster.CONCURRENCY_PAGE,
     maxConcurrency: 50,
     monitor: false,
     timeout: 30000,
