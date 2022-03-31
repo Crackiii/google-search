@@ -13,18 +13,10 @@ const proxies = [
   "196.245.244.231:7777 "
 ];
 
-let proxy = proxies[0];
-
-//set proxy for puppeteer to use proxy server to avoid CORS/ 419 error on google search page 
-const interval = setInterval(() => {
-  console.log("Setting proxy to: ", proxy);
-  proxy = proxies[Math.floor(Math.random() * proxies.length)];
-}, 60000);
-
-
-
 export const getGoogleSearchResultsByQueries = async (queries: string[]) => {
   try {
+  const proxy = proxies[Math.floor(Math.random() * proxies.length)];
+  
   const cluster = await Cluster.launch({
     concurrency: Cluster.CONCURRENCY_PAGE,
     maxConcurrency: 50,
