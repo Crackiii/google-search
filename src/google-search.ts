@@ -1,9 +1,15 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import * as puppeteer from "puppeteer-cluster";
+import { Cluster } from "puppeteer-cluster";
 import { Readability } from "@mozilla/readability";
 import { JSDOM } from "jsdom";
-import { Page } from "puppeteer";
+import {Page} from "puppeteer";
 import UserAgent from "user-agents";
+import StealthPlugin from "puppeteer-extra-plugin-stealth";
+import RecaptchaPlugin from "puppeteer-extra-plugin-recaptcha";
+import puppeteer from "puppeteer-extra";
+
+puppeteer.use(StealthPlugin());
+puppeteer.use(RecaptchaPlugin());
+
 
 const proxies_list = [
   "165.231.37.254:7777",
@@ -34,16 +40,13 @@ const proxies_list = [
 ];
 
 const getProxy = () => {
-  const proxy = proxies_list.shift();
-  proxies_list.push(proxy);
+  const proxy = proxies_list[Math.floor(Math.random() * proxies_list.length)];
 
   return proxy;
 };
 
 const getRandomUserAgent = () => {
-  const random = new UserAgent({
-    platform: "desktop",
-  });
+  const random = new UserAgent();
   return random.random().toString();
 };
 
@@ -54,11 +57,14 @@ export const getGoogleSearchResultsByQueries = async (queries: string[]) => {
   const proxy = getProxy();
   const agent = getRandomUserAgent();
 
-  const cluster = await puppeteer.Cluster.launch({
-    concurrency: puppeteer.Cluster.CONCURRENCY_PAGE,
+
+
+  const cluster = await Cluster.launch({
+    concurrency: Cluster.CONCURRENCY_PAGE,
     maxConcurrency: 50,
     monitor: false,
     timeout: 60000,
+    puppeteer,
     puppeteerOptions: {
       args: [
         "--lang=en-US",
@@ -102,7 +108,7 @@ export const getGoogleSearchResultsByQueries = async (queries: string[]) => {
         });
         throw new Error(`Error crawling on query - ${query}: ${isTrafficDetected ? "Our systems have detected unusual traffic from your computer" : error.message} - IP : ${proxy}`);
       }
-
+      await page.screenshot({ path: "search_data.png" });
       // Collect all the links
       const data = await page.evaluate(() => {
         const links = Array.from(document.querySelectorAll(".yuRUbf"));
@@ -135,8 +141,8 @@ export const getGoogleSearchResultsByQueries = async (queries: string[]) => {
 
 export const getWebsiteDataByLink = async (links: string[]) => {
   try {
-  const cluster = await puppeteer.Cluster.launch({
-    concurrency: puppeteer.Cluster.CONCURRENCY_PAGE,
+  const cluster = await Cluster.launch({
+    concurrency: Cluster.CONCURRENCY_PAGE,
     maxConcurrency: 50,
     monitor: false,
     timeout: 30000,

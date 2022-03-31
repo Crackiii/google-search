@@ -24,7 +24,11 @@
     "errorhandler": "^1.5.1",
     "express": "^4.17.3",
     "jsdom": "^19.0.0",
+    "puppeteer": "^13.5.2",
     "puppeteer-cluster": "^0.23.0",
+    "puppeteer-extra": "^3.2.3",
+    "puppeteer-extra-plugin-recaptcha": "^3.5.0",
+    "puppeteer-extra-plugin-stealth": "^2.9.0",
     "user-agents": "^1.0.972"
   },
   "devDependencies": {
