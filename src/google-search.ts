@@ -5,6 +5,14 @@ import { JSDOM } from "jsdom";
 import { Page } from "puppeteer";
 
 
+const proxies = [
+  "165.231.37.254:7777",
+  "165.231.37.98:7777  ",
+  "185.104.218.48:7777 ",
+  "185.104.219.37:7777 ",
+  "196.245.244.231:7777 "
+];
+
 
 export const getGoogleSearchResultsByQueries = async (queries: string[]) => {
 
@@ -17,6 +25,7 @@ export const getGoogleSearchResultsByQueries = async (queries: string[]) => {
       args: [
         "--lang=en-US",
         "--window-size=1920,1080",
+        `--proxy-server=${proxies[0]}`,
         "--no-sandbox",
       ],
       defaultViewport: null,
@@ -28,8 +37,8 @@ export const getGoogleSearchResultsByQueries = async (queries: string[]) => {
 
     const queriesData: any = [];
 
-    cluster.on("taskerror", (err, data) => {
-      throw new Error(`Error crawling getGoogleSearchResultsByQueries(): ${data}: ${err.message}`);
+    cluster.on("taskerror", (err) => {
+      throw new Error(err.message);
     });
 
     await cluster.task(async ({ page, data: query }) => {
