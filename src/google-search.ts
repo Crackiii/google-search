@@ -57,7 +57,7 @@ export const getGoogleSearchResultsByQueries = async (queries: string[]) => {
 
   const cluster = await Cluster.launch({
     concurrency: Cluster.CONCURRENCY_PAGE,
-    maxConcurrency: 5,
+    maxConcurrency: 50,
     monitor: false,
     timeout: 60000,
     puppeteer,

@@ -6,7 +6,7 @@ import bodyParser from "body-parser";
 const app = express();
 
 // Express configuration
-app.set("port", process.env.PORT || 8003);
+app.set("port", process.env.PORT || 9009);
 
 app.use(bodyParser.json());
 
@@ -36,7 +36,7 @@ app.get("/health", (_, res) => res.status(200).send("Health check works"));
 app.post("/google-search/queries", async (req, res) => {
   try {
     const data = await getGoogleSearchResultsByQueries(req.body.queries);
-    console.log({FUCK_THIS_DATA: data});
+
     res.send(data);
   } catch (error) {
     console.log(error.message);
