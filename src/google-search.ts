@@ -8,9 +8,6 @@ import StealthPlugin from "puppeteer-extra-plugin-stealth";
 import RecaptchaPlugin from "puppeteer-extra-plugin-recaptcha";
 import puppeteer from "puppeteer-extra";
 
-
-
-
 const proxies_list = [
   "165.231.37.254:7777",
   "165.231.37.98:7777  ",
@@ -55,13 +52,12 @@ export const getGoogleSearchResultsByQueries = async (queries: string[]) => {
   try {
 
   const proxy = getProxy();
-  const agent = getRandomUserAgent();
   puppeteer.use(StealthPlugin());
   puppeteer.use(RecaptchaPlugin());
 
   const cluster = await Cluster.launch({
     concurrency: Cluster.CONCURRENCY_PAGE,
-    maxConcurrency: 50,
+    maxConcurrency: 5,
     monitor: false,
     timeout: 60000,
     puppeteer,
@@ -89,6 +85,8 @@ export const getGoogleSearchResultsByQueries = async (queries: string[]) => {
 
       if (!Boolean(query.length)) return [{ links: [], query }];
 
+      const agent = getRandomUserAgent();
+
       await page.setUserAgent(agent);
       await page.authenticate({ username: "nadeemahmad", password: "Ndim2229" });
       await page.setExtraHTTPHeaders({
@@ -106,7 +104,7 @@ export const getGoogleSearchResultsByQueries = async (queries: string[]) => {
         const isTrafficDetected = await page.evaluate(() => {
           return /Our systems have detected unusual traffic from your computer/gim.test(document.body.textContent);
         });
-        // getGoogleSearchResultsByQueries(queries);
+        
         throw new Error(`Error crawling on query - ${query}: ${isTrafficDetected ? "Our systems have detected unusual traffic from your computer" : error.message} - IP : ${proxy}`);
       }
       await page.screenshot({ path: "search_data.png" });
