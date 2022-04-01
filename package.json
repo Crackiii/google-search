@@ -19,6 +19,7 @@
   "author": "Nadeem Ahmad",
   "license": "ISC",
   "dependencies": {
+    "@mich4l/tor-client": "^1.0.4",
     "@mozilla/readability": "^0.4.2",
     "body-parser": "^1.19.2",
     "errorhandler": "^1.5.1",

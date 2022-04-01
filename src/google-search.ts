@@ -65,8 +65,13 @@ export const getGoogleSearchResultsByQueries = async (queries: string[]) => {
       args: [
         "--lang=en-US",
         "--window-size=1920,1080",
-        `--proxy-server=${proxy}`,
+        "proxy-server=" + proxy,
         "--no-sandbox",
+        "--disable-setuid-sandbox",
+        "--disable-infobars",
+        "--window-position=0,0",
+        "--ignore-certifcate-errors",
+        "--ignore-certifcate-errors-spki-list",
       ],
       defaultViewport: null,
       headless: true,
@@ -86,37 +91,36 @@ export const getGoogleSearchResultsByQueries = async (queries: string[]) => {
       if (!Boolean(query.length)) return [{ links: [], query }];
 
       const agent = getRandomUserAgent();
-
       await page.setUserAgent(agent);
       await page.authenticate({ username: "nadeemahmad", password: "Ndim2229" });
       await page.setExtraHTTPHeaders({
         "Accept-Language": "en-US"
       });
+      await page.goto(`https://duckduckgo.com/?q=${query}&ia=web`);
 
-      await page.goto(`https://google.com/search?q=${query}`);
 
       await page.screenshot({ path: "search.png" });
 
       // Wait for search results container to be available
-      try {
-        await page.waitForSelector("#search", { visible: true, timeout: 30000 });
-      } catch (error) {
-        const isTrafficDetected = await page.evaluate(() => {
-          return /Our systems have detected unusual traffic from your computer/gim.test(document.body.textContent);
-        });
+      // try {
+      await page.waitForSelector("#links", { visible: true, timeout: 30000 });
+      // } catch (error) {
+      //   const isTrafficDetected = await page.evaluate(() => {
+      //     return /Our systems have detected unusual traffic from your computer/gim.test(document.body.textContent);
+      //   });
         
-        throw new Error(`Error crawling on query - ${query}: ${isTrafficDetected ? "Our systems have detected unusual traffic from your computer" : error.message} - IP : ${proxy}`);
-      }
+      //   throw new Error(`Error crawling on query - ${query}: ${isTrafficDetected ? "Our systems have detected unusual traffic from your computer" : error.message} - IP : ${proxy}`);
+      // }
       await page.screenshot({ path: "search_data.png" });
       // Collect all the links
       const data = await page.evaluate(() => {
-        const links = Array.from(document.querySelectorAll(".yuRUbf"));
-        const data = links.map(link => {
-          return {
-            link: link.querySelector("a").getAttribute("href"),
-            title: link.querySelector("h3").textContent.trim(),
-          };
-        });
+        const parent = document.getElementById("links");
+        const data = Array.from(parent.querySelectorAll(".result")).map(child => ({
+            title: child.querySelector("h2")?.textContent?.trim(),
+            link: child.querySelector("a")?.getAttribute("href"),
+            breadcrumb: child.querySelector(".result__extras")?.textContent.trim(),
+            description: child.querySelector(".result__snippet")?.textContent.trim()
+        })).filter(c => c.description);
 
         return data;
       });
