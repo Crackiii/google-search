@@ -66,7 +66,7 @@ const evaluateGeneralWebsite = async (page: Page) => {
   const doc = new JSDOM(data);
   const reader = new Readability(doc.window.document);
 
-  return { html: reader.parse()?.content, short_description: reader.parse()?.excerpt, metaData };
+  return { html: reader.parse()?.textContent, short_description: reader.parse()?.excerpt, metaData };
 };
 
 const getPageMetaData = async (page: Page) => {
