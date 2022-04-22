@@ -1,18 +1,12 @@
 import errorHandler from "errorhandler";
 import app from "./app";
-
-
-/**
- * Error Handler. Provides full stack
- */
+import "./services";
+import "./jobs";
 
 if (process.env.NODE_ENV === "development") {
     app.use(errorHandler());
 }
 
-/**
- * Start Express server.
- */
 const server = app.listen(app.get("port"), () => {
     console.log(
         "The wow is running at %d in %s mode",
