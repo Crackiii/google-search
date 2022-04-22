@@ -104,7 +104,7 @@ const jobWorker = async (job: Job) => {
               time: article.time,
               description: article.description || "",
               source: article.source,
-              catgory: categoryName,
+              catgory: categoryName?.split("-")?.[1]?.trim(),
               country: job.data.country,
               related_queries: relatedQueries?.join(","),
             });
