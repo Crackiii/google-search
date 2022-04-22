@@ -8,44 +8,44 @@ datasource db {
 }
 
 model youtube {
-  id          Int @id @default(autoincrement())
-  title        String @db.VarChar(255)
-  url         String @db.VarChar(255)
-  thumbnail_sm String @db.VarChar(255)
-  thumbnail_lg String @db.VarChar(255)
-  channel_name String @db.VarChar(255)
-  channel_thumbnail String @db.VarChar(255)
-  catgory    String @db.VarChar(255)
-  country    String @db.VarChar(255)
-  created_at  DateTime @default(now())
-  updated_at  DateTime @default(now())
+  id                Int      @id @default(autoincrement())
+  title             String   @db.VarChar(255)
+  url               String   @db.VarChar(255)
+  thumbnail_sm      String   @db.VarChar(255)
+  thumbnail_lg      String   @db.VarChar(255)
+  channel_name      String   @db.VarChar(255)
+  channel_thumbnail String   @db.VarChar(255)
+  category          String   @db.VarChar(255)
+  country           String   @db.VarChar(255)
+  created_at        DateTime @default(now())
+  updated_at        DateTime @default(now())
 }
 
 model google {
-  id          Int @id @default(autoincrement())
-  title        String @db.VarChar(1000)
-  url         String @db.VarChar(1000)
-  image_url String @db.VarChar(1000)
-  time       String @db.VarChar(255)
-  description String @db.Text
-  related_queries String @db.Text
-  source    String @db.VarChar(255)
-  catgory    String @db.VarChar(255)
-  country    String @db.VarChar(255)
-  created_at  DateTime @default(now())
-  updated_at  DateTime @default(now())
+  id              Int      @id @default(autoincrement())
+  title           String   @db.VarChar(1000)
+  url             String   @db.VarChar(1000)
+  image_url       String   @db.VarChar(1000)
+  time            String   @db.VarChar(255)
+  description     String
+  related_queries String
+  source          String   @db.VarChar(255)
+  category        String   @db.VarChar(255)
+  country         String   @db.VarChar(255)
+  created_at      DateTime @default(now())
+  updated_at      DateTime @default(now())
 }
 
 model duckduckgo {
-  id          Int @id @default(autoincrement())
-  title        String @db.VarChar(1000)
-  description String @db.Text
-  time       String @db.VarChar(255)
-  url         String @db.VarChar(1000)
-  image_url String @db.VarChar(1000)
-  source    String @db.VarChar(255)
-  category    String @db.VarChar(255)
-  country    String @db.VarChar(255)
+  id          Int      @id @default(autoincrement())
+  title       String   @db.VarChar(1000)
+  description String
+  time        String   @db.VarChar(255)
+  url         String   @db.VarChar(1000)
+  image_url   String   @db.VarChar(1000)
+  source      String   @db.VarChar(255)
+  category    String   @db.VarChar(255)
+  country     String   @db.VarChar(255)
   created_at  DateTime @default(now())
   updated_at  DateTime @default(now())
 }
