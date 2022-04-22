@@ -48,7 +48,7 @@ export const getYoutubeTrendsByCountry = async (country: string) => {
     const cluster = await Cluster.launch({
       concurrency: Cluster.CONCURRENCY_PAGE,
       maxConcurrency: 10,
-      monitor: true,
+      monitor: false,
       timeout: 60000,
       puppeteerOptions: {
         args: [
@@ -69,7 +69,7 @@ export const getYoutubeTrendsByCountry = async (country: string) => {
     });
 
     await cluster.task(async ({ page, data: trend }) => {
-
+      console.log("[Youtube]: Getting youtube results for trend -", trend.label);
       const agent = getRandomUserAgent();
       await page.setUserAgent(agent);
       await page.authenticate({ username: "nadeemahmad", password: "Ndim2229" });

@@ -92,6 +92,7 @@ const jobWorker = async (job: Job) => {
   try {
     if(job.name === "realtime") {
       const countryData = await getGoogleRealTimeTrendsByCountry(job.data.country);
+      console.log("[Google]: Inserting google realtime trends results...");
       for(const category of countryData || []) {
         const categoryName = category.category;
         for(const story of category.stories) { 
@@ -104,7 +105,7 @@ const jobWorker = async (job: Job) => {
               time: article.time,
               description: article.description || "",
               source: article.source,
-              catgory: categoryName?.split("-")?.[1]?.trim(),
+              category: categoryName?.split("-")?.[1]?.trim(),
               country: job.data.country,
               related_queries: relatedQueries?.join(","),
             });
@@ -116,7 +117,7 @@ const jobWorker = async (job: Job) => {
     if(job.name === "daily") {
       const countryData = await getGoogleDailyTrendsByCountry(job.data.country);
       const dailyStories = [...(countryData.today || []), ...(countryData.yesterday || [])];
-
+      console.log("[Google]: Inserting google daily trends results...");
       for(const story of dailyStories || []) {
         const relatedQueries = story?.relatedQueries?.map((query: { query: string }) => query.query) || [];
         for(const article of story?.articles || []) {
@@ -127,7 +128,7 @@ const jobWorker = async (job: Job) => {
             time: article.timeAgo,
             description: article.snippet || "",
             source: article.source,
-            catgory: "-",
+            category: "-",
             country: job.data.country,
             related_queries: relatedQueries?.join(","),
           });

@@ -129,6 +129,7 @@ export const getGoogleRealTimeTrendsByCountry = async (country: string) => {
     // 1 - Get the story ids
     const categoriesPromises = [];
     for(const category of realtime_categories) {
+      console.log("[Google]: Getting google results for category - ", category);
       // get categories codes from the list
       const CATGEORY = category.split(" - ")[0].trim();
 
@@ -162,6 +163,7 @@ export const getGoogleRealTimeTrendsByCountry = async (country: string) => {
 
 //Handler for the daily trends
 export const getGoogleDailyTrendsByCountry = async (country: string) => {
+  console.log("[Google]: Getting google daily trends for country - ", country);
   const data = await getDailyTrends({LOCATION: country});
 
   return data;

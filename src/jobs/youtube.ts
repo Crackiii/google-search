@@ -120,26 +120,24 @@ const jobWorker = async (job: Job) => {
   try {
     if(job.name === "daily") {
       const data = await getYoutubeTrendsByCountry(job.data.country);
+      console.log("[Youtube]: Inserting youtube results...");
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       for(const category of data.youtubeData as any[]) {
         const categoryName = category.trend["value"];
         for(const video of category.links) {
           await putYoutubeTrends({
-            channel_name: video.author || "0-",
+            channel_name: video.author || "-",
             url: video.link,
-            title: video.title || "-0",
+            title: video.title || "-",
             thumbnail_sm: video.thumbnails.medium,
             thumbnail_lg: video.thumbnails.original,
             channel_thumbnail: "-",
-            catgory: categoryName,
-            country: job.data.country
+            category: categoryName,
+            country: job.data.country || "-"
           });
         }
       }
   
-      console.log({
-        country: job.data.country,
-      });
     }
   } catch(error) {
     console.log("Error worker - Youtube: ", error.message);

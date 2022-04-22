@@ -327,9 +327,10 @@ const key = "DuckDuckGo";
 const jobWorker = async (job: Job) => {
     try {
         if(job.name === "realtime") {
-            
             const proxyhost = proxies[Math.floor(Math.random() * proxies.length)];
             const results = await getDuckDuckGoResultsByCountry(job.data.country, proxyhost);
+
+            console.log("[DuckDuckGo]: Inserting duckduckgo results...");
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
             for(const category of results as any[]) {
                 const categoryName = category["category"];
@@ -342,7 +343,7 @@ const jobWorker = async (job: Job) => {
                         time: article.relative_time || "-",
                         source: article.source || "-",
                         category: categoryName,
-                        country: job.data.iso,
+                        country: job.data.code,
                     });
                 }
             }

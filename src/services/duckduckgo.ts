@@ -160,7 +160,7 @@ export const getDuckDuckGoResultsByCountry = async (country: string, host: strin
   try {
     const searchResults: unknown[] = [];
     for(const category of categories) {
-      console.log("Getting DuckDuckGo results by category...", category);
+      console.log("[DuckDuckGo]: Getting results by category - ", category);
       const data = await Promise.all([
         getDuckDuckGoSearchResults(category, country),
         getDuckDuckGoNewsResults(category, country, host),
