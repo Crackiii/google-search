@@ -66,7 +66,7 @@ const evaluateGeneralWebsite = async (page: Page) => {
   const doc = new JSDOM(data);
   const reader = new Readability(doc.window.document);
 
-  return { html: reader.parse()?.textContent, short_description: reader.parse()?.excerpt, metaData };
+  return { html: reader.parse()?.textContent, metaData };
 };
 
 const getPageMetaData = async (page: Page) => {
@@ -74,17 +74,6 @@ const getPageMetaData = async (page: Page) => {
     const metas = Array.from(document.querySelectorAll("meta"));
 
     const title = document.title;
-
-    const getFavicon = () => {
-      let favicon = "";
-      const nodeList = document.getElementsByTagName("link");
-      for (let i = 0; i < nodeList.length; i++) {
-        if ((nodeList[i].getAttribute("rel") == "icon") || (nodeList[i].getAttribute("rel") == "shortcut icon")) {
-          favicon = nodeList[i].getAttribute("href");
-        }
-      }
-      return favicon;
-    };
 
     const validURL = (str: string) => {
       const pattern = new RegExp("^(https?:\\/\\/)?" + // protocol
@@ -99,16 +88,9 @@ const getPageMetaData = async (page: Page) => {
 
     const url = location.href;
 
-    const allImages = Array.from(document.querySelectorAll("img")).map(img => img.src);
-
-    const favicon = getFavicon();
-
     const keywords = metas
       .filter(meta => meta?.getAttribute("name") === "keywords")
       .map(meta => meta?.getAttribute("content")).join(",");
-
-    const metaDescription = metas
-      .find(meta => meta?.getAttribute("name") === "description")?.getAttribute("content");
 
 
     const facebook = metas
@@ -129,11 +111,7 @@ const getPageMetaData = async (page: Page) => {
     ...twitter.filter(o => (o.property === "twitter:image" || /image/gmi.test(o.property)))
     ].map(o => o?.content).filter(validURL);
 
-    const description = [...facebook.filter(o => o.property === "og:description" || /description/gmi.test(o.property)),
-    ...twitter.filter(o => (o.property === "twitter:image" || /image/gmi.test(o.property)))
-    ].map(o => o?.content);
-
-    return { title, keywords, facebook, twitter, images, description: [...description, metaDescription], favicon, url, allImages };
+    return { title, keywords, facebook, twitter, images, url };
   });
 
   return metaData;
