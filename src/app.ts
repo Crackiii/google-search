@@ -19,6 +19,6 @@ app.get("/health", (_, res) => res.status(200).send("Health check works"));
 app.get("/website", websiteHandler);
 
 console.log("STARTING TEST JOB");
-// TestJob();
+TestJob();
 
 export default app;
