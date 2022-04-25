@@ -41,4 +41,4 @@ export const getRandomUserAgent = () => {
   return random.random().toString();
 };
 
-export const REDIS_URL = process.env.REDIS_URL;
+export const REDIS_URL = process.env.NODE_ENV === "production" ? process.env.REDIS_URL:  process.env.REDIS_URL_LOCAL;
