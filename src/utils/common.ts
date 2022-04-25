@@ -41,4 +41,4 @@ export const getRandomUserAgent = () => {
   return random.random().toString();
 };
 
-export const REDIS_URL =  "trendscads-redis-001.nxaaou.0001.euc1.cache.amazonaws.com:6379";
+export const REDIS_URL = "trendscads-redis-001.nxaaou.0001.euc1.cache.amazonaws.com:6379";
