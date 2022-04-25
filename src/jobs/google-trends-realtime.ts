@@ -1,4 +1,4 @@
-// import * as cron from "node-cron";
+import * as cron from "node-cron";
 import { Queue, Worker, QueueEvents, Job } from "bullmq";
 import IORedis from "ioredis";
 import { getGoogleRealTimeTrendsByCountry } from "../services/google-trends";
@@ -103,8 +103,7 @@ googleQueueEvents.on("error", () => {
 });
 
 //schedule a cron job to run every 4 hours
-
-const Job4Hours = async () => {
+const Job4Hours = cron.schedule("0 */4 * * *", async () => {
   if(await googleQueue.count() > 0) {
     console.log("[Google Realtime Trends]: Worker is busy, returning...");
     return;
@@ -113,7 +112,7 @@ const Job4Hours = async () => {
   for(const country of realtime_countries) {
     googleQueue.add("realtime", { country: country.split("-")[1].trim() });
   }
-};
+});
 
 
-Job4Hours();
+Job4Hours.start();

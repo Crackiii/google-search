@@ -1,4 +1,4 @@
-// import * as cron from "node-cron";
+import * as cron from "node-cron";
 import { Queue, Worker, QueueEvents, Job } from "bullmq";
 import IORedis from "ioredis";
 import { getDuckDuckGoResultsByCountry } from "../services/duckduckgo";
@@ -386,8 +386,8 @@ duckQueueEvents.on("error", () => {
   console.log("[DuckDuckGo]: Queue job error");
 });
 
-//schedule a cron job to run every 4 hours
-const Job8Hours = async () => {
+//schedule a cron job to run every 12 hours
+const Job8Hours =  cron.schedule("0 0 */12 * * *", async () => {
   if(await duckQueue.count() > 0) {
     console.log("[DuckDuckGo]: Worker is busy, returning...");
     return;
@@ -396,6 +396,6 @@ const Job8Hours = async () => {
   for(const country of countries) {
     duckQueue.add("realtime", { country: country.id, code: country.iso });
   }
-};
+});
 
-Job8Hours();
+Job8Hours.start();

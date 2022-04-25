@@ -1,4 +1,4 @@
-// import * as cron from "node-cron";
+import * as cron from "node-cron";
 import { Queue, Worker, QueueEvents, Job } from "bullmq";
 import IORedis from "ioredis";
 import { getGoogleDailyTrendsByCountry } from "../services/google-trends";
@@ -118,7 +118,7 @@ googleQueueEvents.on("error", () => {
 });
 
 //schedule a cron job to run every day at midday
-const JobDaily = async () => {
+const JobDaily = cron.schedule("0 0 12 * * *", async () => {
   if(await googleQueue.count() > 0) {
     console.log("[Google Daily Trends]: Worker is busy, returning...");
     return;
@@ -127,6 +127,6 @@ const JobDaily = async () => {
   for(const country of daily_countries) {
     googleQueue.add("daily", { country: country.split("-")[1].trim() });
   }
-};
+});
 
-JobDaily();
+JobDaily.start();

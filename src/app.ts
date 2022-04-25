@@ -12,7 +12,6 @@ app.use(function (_, res, next) {
   next();
 });
 
-
 app.get("/", (_, res) => res.status(200).send("<h1>Running app</h1>"));
 app.get("/health", (_, res) => res.status(200).send("Health check works"));
 app.get("/website", websiteHandler);

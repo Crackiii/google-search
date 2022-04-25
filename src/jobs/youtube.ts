@@ -1,4 +1,4 @@
-// import * as cron from "node-cron";
+import * as cron from "node-cron";
 import { Queue, Worker, QueueEvents, Job } from "bullmq";
 import IORedis from "ioredis";
 import { getYoutubeTrendsByCountry } from "../services/youtube";
@@ -178,8 +178,8 @@ youtubeQueueEvents.on("error", () => {
 });
 
 
-//schedule a cron job to run every day at midday
-const JobDaily = async () => {
+//schedule a cron job to run every 12 hours
+const JobDaily = cron.schedule("0 0 */12 * * *", async () => {
   if(await youtubeQueue.count() > 0) {
     console.log("[Youtube]: Worker is busy, returning...");
     return;
@@ -188,6 +188,6 @@ const JobDaily = async () => {
   for(const country of all_countries) {
     youtubeQueue.add("daily", { country: country.split("-")[1].trim() });
   }
-};
+});
 
-JobDaily();
+JobDaily.start();
