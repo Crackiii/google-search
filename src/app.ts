@@ -18,7 +18,7 @@ app.get("/", (_, res) => res.status(200).send("<h1>Running app</h1>"));
 app.get("/health", (_, res) => res.status(200).send("Health check works"));
 app.get("/website", websiteHandler);
 
-console.log("STARTING TEST JOB");
+console.log("STARTING TEST JOB", process.env.REDIS_URL);
 TestJob();
 
 export default app;
