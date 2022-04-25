@@ -129,4 +129,4 @@ const JobDaily = async () => {
   }
 };
 
-// JobDaily();
+JobDaily();

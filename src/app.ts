@@ -1,6 +1,5 @@
 import express from "express";
 import { websiteHandler } from "./services/website";
-import {TestJob} from "./jobs/test";
 const app = express();
 
 app.set("port", process.env.PORT || 3009);
@@ -18,7 +17,6 @@ app.get("/", (_, res) => res.status(200).send("<h1>Running app</h1>"));
 app.get("/health", (_, res) => res.status(200).send("Health check works"));
 app.get("/website", websiteHandler);
 
-console.log("STARTING TEST JOB");
-TestJob();
+
 
 export default app;
