@@ -125,7 +125,7 @@ export const getDuckDuckGoNewsResults = async (query: string, country: string, h
 
 export const getDuckDuckGoVideosResults = async (query: string, country: string, host: string) => {
   const vqd = await getVQD(query, country, host);
-  const data = await axios.get(`https://duckduckgo.com/v.js?l=us-en&o=json&q=${query}&l=${country}&vqd=${vqd}`, {
+  const data = await axios.get(`https://duckduckgo.com/v.js?l=us-en&o=json&q=${query}&l=${country}&vqd=${vqd}&iaf=publishedAfter:d`, {
     proxy: {
       host,
       port: 7777,
@@ -161,12 +161,12 @@ export const getDuckDuckGoResultsByCountry = async (country: string, host: strin
     const searchResults: unknown[] = [];
     for(const category of categories) {
       console.log("[DuckDuckGo]: Getting results by category - ", category);
-      const data = await Promise.all([
-        getDuckDuckGoSearchResults(category, country),
-        getDuckDuckGoNewsResults(category, country, host),
-      ]).catch(error => console.log(error.message));
+      const [news, videos] = await Promise.all([
+        getDuckDuckGoNewsResults(category, country, host).catch(error => console.log(error.message)),
+        getDuckDuckGoVideosResults(category, country, host).catch(error => console.log(error.message)),
+      ]);
 
-      searchResults.push({data: (data as unknown[]).flatMap(a => a), category});
+      searchResults.push({data: [...news, ...videos], category});
     }
 
     return searchResults;

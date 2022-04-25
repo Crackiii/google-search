@@ -15,7 +15,7 @@ services:
     image: rediscommander/redis-commander
     restart: always
     environment:
-      - REDIS_HOSTS=local:redis:6379
+      - REDIS_HOSTS=trendscads-redis-001.nxaaou.0001.euc1.cache.amazonaws.com:6379
     ports:
       - 8081:8081
 

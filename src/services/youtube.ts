@@ -39,6 +39,63 @@ export const youtube_trends = [
   }
 ];
 
+export const food_trends = [
+  {
+    channel: "/c/thefoodranger/videos?view=0&sort=dd&flow=grid"
+  },
+  {
+    channel: "/c/BestEverFoodReviewShow/videos?view=0&sort=dd&flow=grid"
+  },
+  {
+    channel: "/c/MarkWiens/videos?view=0&sort=dd&flow=grid"
+  },
+  {
+    channel: "/c/VillageCookingChannel/videos?view=0&sort=dd&flow=grid"
+  },
+  {
+    channel: "/c/AlmazanKitchen/videos?view=0&sort=dd&flow=grid"
+  },
+  {
+    channel: "/c/epicmealtime/videos?view=0&sort=dd&flow=grid"
+  },
+  {
+    channel: "/c/bingingwithbabish/videos?view=0&sort=dd&flow=grid"
+  },
+  {
+    channel: "/c/RosannaPansino/videos?view=0&sort=dd&flow=grid"
+  },
+  {
+    channel: "/c/FirstWeFeast/videos?view=0&sort=dd&flow=grid"
+  },
+  {
+    channel: "/c/bonappetit/videos?view=0&sort=dd&flow=grid"
+  },
+  {
+    channel: "/c/TravelThirstyBlog/videos?view=0&sort=dd&flow=grid"
+  },
+  {
+    channel: "/user/gordonramsay/videos?view=0&sort=dd&flow=grid"
+  }
+];
+
+export const travel_trends = [
+  {
+    channel: "/c/Caseyneistatofficial/videos?view=0&sort=dd&flow=grid"
+  },
+  {
+    channel: "c/YesTheory/videos?view=0&sort=dd&flow=grid"
+  }, 
+  {
+    channel: "c/MojoTravels/videos?view=0&sort=dd&flow=grid"
+  },
+  {
+    channel: "/c/FairDinkumAdventure/videos?view=0&sort=dd&flow=grid"
+  },
+  {
+    channel: "/c/Theendlessadventure/videos?view=0&sort=dd&flow=grid"
+  }
+];
+
 
 export const getYoutubeTrendsByCountry = async (country: string) => {
 

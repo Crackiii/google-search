@@ -21,7 +21,22 @@ model youtube {
   updated_at        DateTime @default(now())
 }
 
-model google {
+model google_realtime {
+  id              Int      @id @default(autoincrement())
+  title           String   @db.VarChar(1000)
+  url             String   @db.VarChar(1000)
+  image_url       String   @db.VarChar(1000)
+  time            String   @db.VarChar(255)
+  description     String
+  related_queries String
+  source          String   @db.VarChar(255)
+  category        String   @db.VarChar(255)
+  country         String   @db.VarChar(255)
+  created_at      DateTime @default(now())
+  updated_at      DateTime @default(now())
+}
+
+model google_daily {
   id              Int      @id @default(autoincrement())
   title           String   @db.VarChar(1000)
   url             String   @db.VarChar(1000)
@@ -38,14 +53,44 @@ model google {
 
 model duckduckgo {
   id          Int      @id @default(autoincrement())
-  title       String   @db.VarChar(1000)
-  description String
+  title       String   
+  description String   
   time        String   @db.VarChar(255)
-  url         String   @db.VarChar(1000)
-  image_url   String   @db.VarChar(1000)
+  url         String   
+  image_url   String   
   source      String   @db.VarChar(255)
   category    String   @db.VarChar(255)
   country     String   @db.VarChar(255)
   created_at  DateTime @default(now())
   updated_at  DateTime @default(now())
+}
+
+model countries {
+  id              Int      @id @default(autoincrement())
+  country         String   @db.VarChar(100)
+  country_code     String   @db.VarChar(10)
+  youtube         String   @db.VarChar(10)
+  google_daily    String   @db.VarChar(10)
+  google_realtime String   @db.VarChar(10)
+  duckduckgo      String   @db.VarChar(10)
+  created_at      DateTime @default(now())
+  updated_at      DateTime @default(now())
+}
+
+model scrapper_log {
+  id              Int      @id @default(autoincrement())
+  scrapper        String   @db.VarChar(10)
+  status          String   @db.VarChar(10)
+  created_at      DateTime @default(now())
+  updated_at      DateTime @default(now())
+}
+
+model scrapper_errors {
+  id              Int      @id @default(autoincrement())
+  scrapper        String   @db.VarChar(10)
+  error           String   @db.VarChar(1000)
+  country           String   @db.VarChar(10)
+  category           String   @db.VarChar(30)
+  created_at      DateTime @default(now())
+  updated_at      DateTime @default(now())
 }

@@ -10,106 +10,127 @@ export const countries_website = [
     country: "Australia",
     website: "https://www.amazon.com.au/",
     deals: "https://www.amazon.com/gp/goldbox",
+    iso: "AU",
   },
   {
     country: "Brazil (Brasil)",
     website: "https://www.amazon.com.br/",
-    deals: "https://www.amazon.com.br/deals"
+    deals: "https://www.amazon.com.br/deals",
+    iso: "BR",
   },
   {
     country: "Canada",
     website: "https://www.amazon.ca/",
-    deals: "https://www.amazon.ca/deals"
+    deals: "https://www.amazon.ca/deals",
+    iso: "CA",
   },
   {
     country: "China (中国)",
     website: "https://www.amazon.cn/",
-    deals: "https://www.amazon.cn/deals"
+    deals: "https://www.amazon.cn/deals",
+    iso: "CN",
   },
   {
     country: "Egypt (مصر)",
     website: "https://www.amazon.eg/",
-    deals: "https://www.amazon.eg/deals"
+    deals: "https://www.amazon.eg/deals",
+    iso: "EG",
   },
   {
     country: "France",
     website: "https://www.amazon.fr/",
-    deals: "https://www.amazon.fr/deals"
+    deals: "https://www.amazon.fr/deals",
+    iso: "FR",
   },
   {
     country: "Germany (Deutschland)",
     website: "https://www.amazon.de/",
-    deals: "https://www.amazon.de/deals"
+    deals: "https://www.amazon.de/deals",
+    iso: "DE",
   },
   {
     country: "India",
     website: "https://www.amazon.in/",
     deals: "https://www.amazon.in/deals",
+    iso: "IN",
   },
   {
     country: "Italy (Italia)",
     website: "https://www.amazon.it/",
-    deals: "https://www.amazon.it/deals"
+    deals: "https://www.amazon.it/deals",
+    iso: "IT",
   },
   {
     country: "Japan (日本)",
     website: "https://www.amazon.co.jp/",
-    deals: "https://www.amazon.co.jp/deals"
+    deals: "https://www.amazon.co.jp/deals",
+    iso: "JP",
   },
   {
     country: "Mexico (México)",
     website: "https://www.amazon.com.mx/",
-    deals: "https://www.amazon.com.mx/deals"
+    deals: "https://www.amazon.com.mx/deals",
+    iso: "MX",
   },
   {
     country: "Netherlands (Nederland)",
     website: "https://www.amazon.nl/",
-    deals: "https://www.amazon.nl/deals"
+    deals: "https://www.amazon.nl/deals",
+    iso: "NL",
   },
   {
     country: "Poland (Polska)",
     website: "https://www.amazon.pl/",
-    deals: "https://www.amazon.pl/deals"
+    deals: "https://www.amazon.pl/deals",
+    iso: "PL",
   },
   {
     country: "Saudi Arabia (المملكة العربية السعودية)",
     website: "https://www.amazon.sa/",
-    deals: "https://www.amazon.sa/deals"
+    deals: "https://www.amazon.sa/deals",
+    iso: "SA",
   },
   {
     country: "Singapore",
     website: "https://www.amazon.sg/",
-    deals: "https://www.amazon.sg/deals"
+    deals: "https://www.amazon.sg/deals",
+    iso: "SG",
   },
   {
     country: "Spain (España)",
     website: "https://www.amazon.es/",
-    deals: "https://www.amazon.es/deals"
+    deals: "https://www.amazon.es/deals",
+    iso: "ES",
   },
   {
     country: "Sweden (Sverige)",
     website: "https://www.amazon.se/",
-    deals: "https://www.amazon.se/deals"
+    deals: "https://www.amazon.se/deals",
+    iso: "SE",
   },
   {
     country: "Turkey (Türkiye)",
     website: "https://www.amazon.com.tr/",
-    deals: "https://www.amazon.com.tr/deals"
+    deals: "https://www.amazon.com.tr/deals",
+    iso: "TR",
   },
   {
     country: "United Arab Emirates",
     website: "https://www.amazon.ae/",
-    deals: "https://www.amazon.ae/deals"
+    deals: "https://www.amazon.ae/deals",
+    iso: "AE",
   },
   {
     country: "United Kingdom",
     website: "https://www.amazon.co.uk/",
-    deals: "https://www.amazon.co.uk/deals"
+    deals: "https://www.amazon.co.uk/deals",
+    iso: "UK",
   },
   {
     country: "United States",
     website: "https://www.amazon.com/",
-    deals: "https://www.amazon.com/deals"
+    deals: "https://www.amazon.com/deals",
+    iso: "US",
   }
 ];
 

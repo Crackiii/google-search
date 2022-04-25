@@ -1,10 +1,12 @@
-import * as cron from "node-cron";
+// import * as cron from "node-cron";
 import { Queue, Worker, QueueEvents, Job } from "bullmq";
 import IORedis from "ioredis";
 import { getYoutubeTrendsByCountry } from "../services/youtube";
 import { putYoutubeTrends } from "../database/youtube";
+import _ from "lodash";
+import { REDIS_URL } from "../utils/common";
 
-const all_countries = [
+export const all_countries = [
   "Algeria - DZ",
   "Argentina - AR",
   "Australia - AU",
@@ -124,7 +126,7 @@ const jobWorker = async (job: Job) => {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       for(const category of data.youtubeData as any[]) {
         const categoryName = category.trend["value"];
-        for(const video of category.links) {
+        for(const video of _.reverse(category.links)) {
           await putYoutubeTrends({
             channel_name: video.author || "-",
             url: video.link,
@@ -146,63 +148,46 @@ const jobWorker = async (job: Job) => {
 };
 
 const youtubeQueue = new Queue(key, {
-  connection: new IORedis(process.env.REDIS_URL, {
+  connection: new IORedis(REDIS_URL, {
     maxRetriesPerRequest: null
   }),
 });
 
 new Worker(key, jobWorker, {
-  connection: new IORedis(process.env.REDIS_URL, {
+  connection: new IORedis(REDIS_URL, {
     maxRetriesPerRequest: null
   })
 });
 
 const youtubeQueueEvents = new QueueEvents(key, {
-  connection: new IORedis(process.env.REDIS_URL, {
+  connection: new IORedis(REDIS_URL, {
     maxRetriesPerRequest: null
   })
 });
 
-youtubeQueueEvents.on("progress", ()  => {
-  console.log("YOUTUBE QUEUE JOB PROGRESS");
-});
-
 youtubeQueueEvents.on("failed", ()  => {
-  console.log("YOUTUBE QUEUE JOB FAILED");
+  console.log("[Youtube]: Queue job failed");
 });
 
 youtubeQueueEvents.on("completed", () => {
-  console.log("YOUTUBE QUEUE JOB COMPLETED");
+  console.log("[Youtube]: Queue job completed");
 });
 
 youtubeQueueEvents.on("error", () => {
-  console.log("YOUTUBE QUEUE JOB ERROR");
+  console.log("[Youtube]: Queue job error");
 });
 
 
 //schedule a cron job to run every day at midday
-const JobDaily = cron.schedule("0 0 12 * * *", async () => {
+const JobDaily = async () => {
   if(await youtubeQueue.count() > 0) {
-    console.log("Worker is busy, returning...");
+    console.log("[Youtube]: Worker is busy, returning...");
     return;
   }
 
   for(const country of all_countries) {
     youtubeQueue.add("daily", { country: country.split("-")[1].trim() });
   }
-});
+};
 
-//schedule a cron job to run every second to check the scrapper progress
-const Job1Second = cron.schedule("* * * * * *", async () => {
-  if(await youtubeQueue.count() > 0) {
-    console.log("Youtube worker is busy, returning...");
-    return;
-  }
-
-  for(const country of all_countries) {
-    youtubeQueue.add("daily", { country: country.split("-")[1].trim() });
-  }
-});
-
-JobDaily.stop();
-Job1Second.stop();
+// JobDaily();

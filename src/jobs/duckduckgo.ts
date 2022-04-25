@@ -1,9 +1,11 @@
-import * as cron from "node-cron";
+// import * as cron from "node-cron";
 import { Queue, Worker, QueueEvents, Job } from "bullmq";
 import IORedis from "ioredis";
 import { getDuckDuckGoResultsByCountry } from "../services/duckduckgo";
 import { proxies } from "../proxies";
 import { putDuckDuckGoTrends } from "../database/duckduckgo";
+import _ from "lodash";
+import { REDIS_URL } from "../utils/common";
 export const countries = [
    {
         "label": "Germany",
@@ -232,7 +234,8 @@ export const countries = [
   },
   {
       "label": "Russia",
-      "id": "ru-ru"
+      "id": "ru-ru",
+    iso: "RU",
   },
   {
       "label": "Saudi Arabia",
@@ -334,14 +337,14 @@ const jobWorker = async (job: Job) => {
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
             for(const category of results as any[]) {
                 const categoryName = category["category"];
-                for(const article of category.data) {
+                for(const article of _.reverse(category.data)) {
                     await putDuckDuckGoTrends({
-                        title: article.title,
-                        description: article.description || article.excerpt,
-                        url: article.url || article.link,
-                        image_url: article.image || "-", 
-                        time: article.relative_time || "-",
-                        source: article.source || "-",
+                        title: article.title || "-",
+                        description: article.description || article.excerpt || "-",
+                        url: article.url || article.link || article.content || "-",
+                        image_url: article.image || article.images?.large || "-", 
+                        time: article.relative_time || article.published || "-",
+                        source: article.source || article.publisher || "-",
                         category: categoryName,
                         country: job.data.code,
                     });
@@ -354,62 +357,45 @@ const jobWorker = async (job: Job) => {
 };
 
 const duckQueue = new Queue(key, {
-  connection: new IORedis(process.env.REDIS_URL, {
+  connection: new IORedis(REDIS_URL, {
     maxRetriesPerRequest: null
   }),
 });
 
 new Worker(key, jobWorker, {
-  connection: new IORedis(process.env.REDIS_URL, {
+  connection: new IORedis(REDIS_URL, {
     maxRetriesPerRequest: null
   })
 });
 
 const duckQueueEvents = new QueueEvents(key, {
-  connection: new IORedis(process.env.REDIS_URL, {
+  connection: new IORedis(REDIS_URL, {
     maxRetriesPerRequest: null
   })
 });
 
-duckQueueEvents.on("progress", ()  => {
-  console.log("DUCK QUEUE JOB PROGRESS");
-});
-
 duckQueueEvents.on("failed", ()  => {
-  console.log("DUCK QUEUE JOB FAILED");
+  console.log("[DuckDuckGo]: Queue job failed");
 });
 
 duckQueueEvents.on("completed", () => {
-  console.log("DUCK QUEUE JOB COMPLETED");
+  console.log("[DuckDuckGo]: Queue job completed");
 });
 
 duckQueueEvents.on("error", () => {
-  console.log("DUCK QUEUE JOB ERROR");
+  console.log("[DuckDuckGo]: Queue job error");
 });
 
 //schedule a cron job to run every 4 hours
-const Job4Hours = cron.schedule("*/4 * * * *", async () => {
+const Job8Hours = async () => {
   if(await duckQueue.count() > 0) {
-    console.log("Worker is busy, returning...");
-    return;
-  }
-
-  for(const country of countries) {
-    duckQueue.add("realtime", { country: country.id });
-  }
-});
-
-//schedule a cron job to run every second to check the scrapper progress
-const Job1Second = cron.schedule("* * * * * *", async () => {
-  if(await duckQueue.count() > 0) {
-    console.log("Duckduckgo is busy, returning...");
+    console.log("[DuckDuckGo]: Worker is busy, returning...");
     return;
   }
 
   for(const country of countries) {
     duckQueue.add("realtime", { country: country.id, code: country.iso });
   }
-});
+};
 
-Job4Hours.stop();
-Job1Second.stop();
+// Job8Hours();
