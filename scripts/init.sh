@@ -1,4 +1,4 @@
-#/bin/sh
+#!/bin/bash
 
 echo "[INIT.SH]: Starting init.sh scripts..."
 
