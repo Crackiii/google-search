@@ -146,8 +146,8 @@ export const getDuckDuckGoProductsResults = async (query: string, country: strin
       host,
       port: 7777,
       auth: {
-        username: "nadeemahmad",
-        password: "Ndim2229",
+        username: "",
+        password: "",
       }
     }
   });
